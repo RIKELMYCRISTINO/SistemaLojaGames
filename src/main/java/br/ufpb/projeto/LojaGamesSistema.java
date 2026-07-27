@@ -176,21 +176,40 @@ public class LojaGamesSistema implements SistemaLojaGames {
 
     @Override
     public void salvarDados() throws IOException {
-
-        gravador.salvar(jogos);
-
+        if (jogos.isEmpty() && clientes.isEmpty()) {
+            throw new IllegalStateException("Não há jogos nem clientes cadastrados para salvar.");
+        }
+        Object[] dados = {jogos, clientes};
+        gravador.salvar(dados);
     }
 
     @Override
     @SuppressWarnings("unchecked")
     public void recuperarDados() throws IOException {
-
         Object objeto = gravador.recuperar();
 
-        if (objeto != null) {
-
-            jogos = (Map<String, Jogo>) objeto;
-
+        if (objeto == null) {
+            throw new IOException("Nenhum arquivo de dados encontrado para recuperar.");
         }
+
+        Map<String, Jogo> tempJogos = new HashMap<>();
+        Map<String, Cliente> tempClientes = new HashMap<>();
+
+        if (objeto instanceof Object[]) {
+            Object[] dados = (Object[]) objeto;
+            tempJogos = (Map<String, Jogo>) dados[0];
+            tempClientes = (Map<String, Cliente>) dados[1];
+        } else if (objeto instanceof Map) {
+            tempJogos = (Map<String, Jogo>) objeto;
+        }
+
+        // Se encontrou o arquivo mas ele está completamente vazio:
+        if (tempJogos.isEmpty() && tempClientes.isEmpty()) {
+            throw new IOException("O arquivo de dados está vazio.");
+        }
+
+        // Se tem dados, atualiza os mapas oficiais do sistema
+        jogos = tempJogos;
+        clientes = tempClientes;
     }
 }
