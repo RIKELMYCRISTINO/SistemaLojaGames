@@ -1,0 +1,116 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam monochrome false
+skinparam shadowing true
+
+' Interfaces e Classes
+interface SistemaLojaGames {
+  + cadastrarJogo(nome: String, categoria: String, preco: double, quantidade: int): boolean
+  + pesquisarJogo(nome: String): Collection<Jogo>
+  + removerJogo(nome: String): void
+  + atualizarPreco(nome: String, novoPreco: double): void
+  + atualizarEstoque(nome: String, quantidade: int): void
+  + listarJogos(): Collection<Jogo>
+  + pesquisarPorCategoria(categoria: String): Collection<Jogo>
+  + pesquisarPorPreco(precoMax: double): Collection<Jogo>
+  + cadastrarCliente(cpf: String, nome: String, telefone: String): boolean
+  + pesquisarCliente(cpf: String): Collection<Cliente>
+  + removerCliente(cpf: String): void
+  + listarClientes(): Collection<Cliente>
+  + salvarDados(): void
+  + recuperarDados(): void
+}
+
+class LojaGamesSistema {
+  - jogos: Map<String, Jogo>
+  - clientes: Map<String, Cliente>
+  - gravador: GravadorDeDados
+  + cadastrarJogo(nome: String, categoria: String, preco: double, quantidade: int): boolean
+  + pesquisarJogo(nome: String): Collection<Jogo>
+  + removerJogo(nome: String): void
+  + atualizarPreco(nome: String, novoPreco: double): void
+  + atualizarEstoque(nome: String, quantidade: int): void
+  + listarJogos(): Collection<Jogo>
+  + pesquisarPorCategoria(categoria: String): Collection<Jogo>
+  + pesquisarPorPreco(precoMax: double): Collection<Jogo>
+  + cadastrarCliente(cpf: String, nome: String, telefone: String): boolean
+  + pesquisarCliente(cpf: String): Collection<Cliente>
+  + removerCliente(cpf: String): void
+  + listarClientes(): Collection<Cliente>
+  + salvarDados(): void
+  + recuperarDados(): void
+}
+
+class Jogo <<Serializable>> {
+  - nome: String
+  - categoria: String
+  - preco: double
+  - quantidade: int
+  + getNome(): String
+  + getCategoria(): String
+  + getPreco(): double
+  + getQuantidade(): int
+  + setPreco(preco: double): void
+  + setQuantidade(quantidade: int): void
+}
+
+class Cliente <<Serializable>> {
+  - cpf: String
+  - nome: String
+  - telefone: String
+  + getCpf(): String
+  + getNome(): String
+  + getTelefone(): String
+}
+
+class GravadorDeDados {
+  + salvar(obj: Object): void
+  + recuperar(): Object
+}
+
+class TelaPrincipal {
+  - sistema: SistemaLojaGames
+  + TelaPrincipal()
+  - cadastrarJogo(): void
+  - pesquisarJogo(): void
+  - removerJogo(): void
+  - atualizarPreco(): void
+  - atualizarEstoque(): void
+  - listarJogos(): void
+  - cadastrarCliente(): void
+  - pesquisarCliente(): void
+  - removerCliente(): void
+  - listarClientes(): void
+  - salvarDados(): void
+  - recuperarDados(): void
+}
+
+class Main {
+  + main(args: String[]): void
+}
+
+class JogoInexistenteException <<Exception>> {
+  - serialVersionUID: long
+  + JogoInexistenteException(msg: String)
+}
+
+class ClienteInexistenteException <<Exception>> {
+  - serialVersionUID: long
+  + ClienteInexistenteException(msg: String)
+}
+
+' Relacionamentos estruturados para espelhar a imagem original
+SistemaLojaGames <|.. LojaGamesSistema : Realiza
+
+TelaPrincipal -up-> SistemaLojaGames : Associação
+Main .up.> TelaPrincipal : Dependência
+
+LojaGamesSistema *-right- Jogo : Composição
+LojaGamesSistema *-right- Cliente : Composição
+
+LojaGamesSistema -down-> GravadorDeDados : Associação
+
+LojaGamesSistema ..> JogoInexistenteException : Dependência
+LojaGamesSistema ..> ClienteInexistenteException : Dependência
+
+@enduml
