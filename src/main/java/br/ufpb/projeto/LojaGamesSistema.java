@@ -42,16 +42,14 @@ public class LojaGamesSistema implements SistemaLojaGames {
         return true;
     }
 
+
     @Override
     public Collection<Jogo> pesquisarJogo(String nome) {
 
-        Collection<Jogo> encontrados = new ArrayList<>();
-
-        if (jogos.containsKey(nome)) {
-            encontrados.add(jogos.get(nome));
-        }
-
-        return encontrados;
+        return jogos.values()
+                .stream()
+                .filter(j -> j.getNome().equalsIgnoreCase(nome))
+                .toList();
     }
 
     @Override
